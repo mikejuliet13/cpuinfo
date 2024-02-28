@@ -11,6 +11,8 @@
 #endif
 
 #include <stdint.h>
+#include <sys/auxv.h>
+#include <string.h>
 
 /* Identify architecture and define corresponding macro */
 
@@ -580,6 +582,21 @@ enum cpuinfo_uarch {
 	/** Marvell PJ4. */
 	cpuinfo_uarch_pj4 = 0x00900100,
 
+	/** POWER 7. */
+	cpuinfo_uarch_power7    = 0x00D00100,
+	/** POWER 7p. */
+	cpuinfo_uarch_power7p   = 0x00D00101,
+	/** POWER 8. */
+	cpuinfo_uarch_power8    = 0x00D00200,
+	/** POWER8E. */
+	cpuinfo_uarch_power8e   = 0x00D00201,
+	/** POWER8NVL */
+	cpuinfo_uarch_power8nvl = 0x00D00202,
+	/** POWER 9. */
+	cpuinfo_uarch_power9    = 0x00D00303,
+	/** POWER 10. */
+	cpuinfo_uarch_power10   = 0x00D00400,
+
 	/** Broadcom Brahma B15. */
 	cpuinfo_uarch_brahma_b15 = 0x00A00100,
 	/** Broadcom Brahma B53. */
@@ -663,9 +680,14 @@ struct cpuinfo_core {
 #elif CPUINFO_ARCH_ARM || CPUINFO_ARCH_ARM64
 	/** Value of Main ID Register (MIDR) for this core */
 	uint32_t midr;
+#elif CPUINFO_ARCH_PPC64
+	/** Value of Processor Version Register for this core */
+	uint32_t pvr;
 #endif
 	/** Clock rate (non-Turbo) of the core, in Hz */
 	uint64_t frequency;
+
+	bool disabled;
 };
 
 struct cpuinfo_cluster {
@@ -691,6 +713,9 @@ struct cpuinfo_cluster {
 #elif CPUINFO_ARCH_ARM || CPUINFO_ARCH_ARM64
 	/** Value of Main ID Register (MIDR) of the cores in the cluster */
 	uint32_t midr;
+#elif CPUINFO_ARCH_PPC64
+	/** Value of Processor Version Register in this cluster */
+	uint32_t pvr;
 #endif
 	/** Clock rate (non-Turbo) of the cores in the cluster, in Hz */
 	uint64_t frequency;
@@ -2036,6 +2061,49 @@ static inline bool cpuinfo_has_riscv_v(void) {
 #else
 	return false;
 #endif
+}
+
+#if CPUINFO_ARCH_PPC64
+	struct cpuinfo_powerpc_isa {
+		bool vsx;
+		bool vmx;
+		bool htm;
+		bool mma;
+	};
+
+	extern struct cpuinfo_powerpc_isa cpuinfo_isa;
+#endif
+
+static inline bool cpuinfo_has_powerpc_vsx(void) {
+#if CPUINFO_ARCH_PPC64
+	return cpuinfo_isa.vsx;
+#else
+	return false;
+#endif
+}
+
+static inline bool cpuinfo_has_powerpc_vmx(void) {
+#if CPUINFO_ARCH_PPC64
+	return cpuinfo_isa.vmx;
+#else
+	return false;
+#endif
+}
+
+static inline bool cpuinfo_has_powerpc_htm(void) {
+#if CPUINFO_ARCH_PPC64
+	return cpuinfo_isa.htm;
+#else
+	return false;
+#endif
+}
+
+static inline bool cpuinfo_has_powerpc_mma(void) {
+	const char* platform = (const char*)getauxval(AT_PLATFORM);
+	if (strcmp(platform,"power10")==0)
+		return cpuinfo_isa.mma;
+	else
+		return false;
 }
 
 const struct cpuinfo_processor* CPUINFO_ABI cpuinfo_get_processors(void);
