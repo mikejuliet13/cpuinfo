@@ -581,6 +581,20 @@ enum cpuinfo_uarch {
 	/** Marvell PJ4. */
 	cpuinfo_uarch_pj4 = 0x00900100,
 
+	/** Broadcom Brahma B15. */
+	cpuinfo_uarch_brahma_b15 = 0x00A00100,
+	/** Broadcom Brahma B53. */
+	cpuinfo_uarch_brahma_b53 = 0x00A00101,
+
+	/** Applied Micro X-Gene. */
+	cpuinfo_uarch_xgene = 0x00B00100,
+
+	/* Hygon Dhyana (a modification of AMD Zen for Chinese market). */
+	cpuinfo_uarch_dhyana = 0x01000100,
+
+	/** HiSilicon TaiShan v110 (Huawei Kunpeng 920 series processors). */
+	cpuinfo_uarch_taishan_v110 = 0x00C00100,
+
 	/** POWER 7. */
 	cpuinfo_uarch_power7    = 0x00D00100,
 	/** POWER 7p. */
@@ -595,20 +609,6 @@ enum cpuinfo_uarch {
 	cpuinfo_uarch_power9    = 0x00D00303,
 	/** POWER 10. */
 	cpuinfo_uarch_power10   = 0x00D00400,
-
-	/** Broadcom Brahma B15. */
-	cpuinfo_uarch_brahma_b15 = 0x00A00100,
-	/** Broadcom Brahma B53. */
-	cpuinfo_uarch_brahma_b53 = 0x00A00101,
-
-	/** Applied Micro X-Gene. */
-	cpuinfo_uarch_xgene = 0x00B00100,
-
-	/* Hygon Dhyana (a modification of AMD Zen for Chinese market). */
-	cpuinfo_uarch_dhyana = 0x01000100,
-
-	/** HiSilicon TaiShan v110 (Huawei Kunpeng 920 series processors). */
-	cpuinfo_uarch_taishan_v110 = 0x00C00100,
 };
 
 struct cpuinfo_processor {
@@ -2065,7 +2065,6 @@ static inline bool cpuinfo_has_riscv_v(void) {
 #if CPUINFO_ARCH_PPC64
 	struct cpuinfo_powerpc_isa {
 		bool vsx;
-		bool vmx;
 		bool htm;
 		bool mma;
 	};
@@ -2076,14 +2075,6 @@ static inline bool cpuinfo_has_riscv_v(void) {
 static inline bool cpuinfo_has_powerpc_vsx(void) {
 #if CPUINFO_ARCH_PPC64
 	return cpuinfo_isa.vsx;
-#else
-	return false;
-#endif
-}
-
-static inline bool cpuinfo_has_powerpc_vmx(void) {
-#if CPUINFO_ARCH_PPC64
-	return cpuinfo_isa.vmx;
 #else
 	return false;
 #endif
