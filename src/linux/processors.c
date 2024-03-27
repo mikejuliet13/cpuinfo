@@ -55,7 +55,10 @@ inline static const char* parse_number(const char* start, const char* end, uint3
 	uint32_t number = 0;
 	const char* parsed = start;
 	if (*parsed == '-')
-		return 0;
+	{
+		*number_ptr = 0;
+		return "\n";
+	}
 	for (; parsed != end; parsed++) {
 		const uint32_t digit = (uint32_t)(uint8_t)(*parsed) - (uint32_t)'0';
 		if (digit >= 10) {
