@@ -748,6 +748,9 @@ struct cpuinfo_uarch_info {
 #elif CPUINFO_ARCH_ARM || CPUINFO_ARCH_ARM64
 	/** Value of Main ID Register (MIDR) for the microarchitecture */
 	uint32_t midr;
+#elif CPUINFO_ARCH_PPC64
+	/** Value of Processor Version Register for this core */
+	uint32_t pvr;
 #endif
 	/** Number of logical processors with the microarchitecture */
 	uint32_t processor_count;

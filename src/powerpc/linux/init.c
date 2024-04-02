@@ -125,8 +125,10 @@ void cpuinfo_powerpc_linux_init(void) {
 	}
 
 	/* Where's this used ?? */
-	const uint32_t isa_features = cpuinfo_powerpc_linux_hwcap_from_getauxval();
-	const uint32_t isa_features2 = (uint32_t) getauxval(AT_HWCAP2);
+	uint32_t isa_feature[2];
+	cpuinfo_powerpc_linux_hwcap_from_getauxval(isa_feature);
+	const uint32_t isa_features = isa_feature[0];
+	const uint32_t isa_features2 = isa_feature[1];
 	cpuinfo_ppc64_linux_decode_isa_from_proc_cpuinfo(isa_features, isa_features2, &cpuinfo_isa);
 
 	/* Detect min/max frequency and package id*/
@@ -313,6 +315,14 @@ void cpuinfo_powerpc_linux_init(void) {
 		linux_cpu_to_core_map[powerpc_linux_processors[i].system_processor_id] = &cores[i];
 		// Disable all by default
 		cores[i].disabled = powerpc_linux_processors[i].disabled;
+
+		cpuinfo_global_uarch = (struct cpuinfo_uarch_info){
+			.uarch = powerpc_linux_processors[i].uarch,
+			.pvr = powerpc_linux_processors[i].pvr,
+			.processor_count = powerpc_linux_processors_count,
+			.core_count = usable_processors
+	};
+
 		/* Populate the cache information */
 		struct cpuinfo_cache tmp_l2 = { 0 }, tmp_l3 = { 0 };
 		cpuinfo_powerpc_decode_cache(cluster_id, &l1i[i], &l1d[i], &tmp_l2, &tmp_l3);

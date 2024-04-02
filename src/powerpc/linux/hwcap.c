@@ -25,11 +25,12 @@
 	}
 #endif
 
-uint32_t cpuinfo_powerpc_linux_hwcap_from_getauxval(void)
+void cpuinfo_powerpc_linux_hwcap_from_getauxval(uint32_t isa_feature[])
 {
 	#if CPUINFO_MOCK
-		return mock_hwcap;
+		isa_feature[0] = mock_hwcap;
 	#else
-		return (uint32_t) getauxval(AT_HWCAP);
+		isa_feature[0] = (uint32_t) getauxval(AT_HWCAP);
+		isa_feature[1] = (uint32_t) getauxval(AT_HWCAP2);
 	#endif
 }

@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #if !defined(__ANDROID__)
 /*
  * sched.h is only used for CPU_SETSIZE constant.
@@ -57,7 +56,8 @@ inline static const char* parse_number(const char* start, const char* end, uint3
 	if (*parsed == '-')
 	{
 		*number_ptr = 0;
-		return "\n";
+		static const char newline[] = "\n";
+	        return newline;
 	}
 	for (; parsed != end; parsed++) {
 		const uint32_t digit = (uint32_t)(uint8_t)(*parsed) - (uint32_t)'0';

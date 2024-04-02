@@ -37,7 +37,7 @@ void cpuinfo_powerpc_decode_vendor_uarch(
 			*uarch = cpuinfo_uarch_power9;
 			*vendor = cpuinfo_vendor_ibm;
 			break;
-		case 0x4f:
+		case 0x80:
 			*uarch = cpuinfo_uarch_power10;
 			*vendor = cpuinfo_vendor_ibm;
 			break;

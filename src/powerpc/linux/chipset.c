@@ -67,7 +67,7 @@ void cpuinfo_powerpc_chipset_decode(
 			}
 			chipset->vendor = cpuinfo_powerpc_chipset_vendor_ibm;
 		break;
-		case 0x4f:
+		case 0x80:
 			chipset->model = cpuinfo_powerpc_chipset_model_power10_raw;
 			chipset->vendor = cpuinfo_powerpc_chipset_vendor_ibm;
 		default:

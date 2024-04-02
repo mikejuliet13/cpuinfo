@@ -103,7 +103,7 @@ struct cpuinfo_powerpc_linux_processor {
 	bool disabled;
 };
 
-uint32_t cpuinfo_powerpc_linux_hwcap_from_getauxval(void);
+void cpuinfo_powerpc_linux_hwcap_from_getauxval(uint32_t isa_feature[]);
 
 void cpuinfo_ppc64_linux_decode_isa_from_proc_cpuinfo(
 		uint32_t features, uint32_t features2,
