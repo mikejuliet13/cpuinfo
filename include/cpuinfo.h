@@ -11,7 +11,6 @@
 #endif
 
 #include <stdint.h>
-#include <sys/auxv.h>
 
 /* Identify architecture and define corresponding macro */
 
@@ -595,19 +594,19 @@ enum cpuinfo_uarch {
 	/** HiSilicon TaiShan v110 (Huawei Kunpeng 920 series processors). */
 	cpuinfo_uarch_taishan_v110 = 0x00C00100,
 
-	/** POWER 7. */
+	/** IBM POWER 7. */
 	cpuinfo_uarch_power7    = 0x00D00100,
-	/** POWER 7p. */
+	/** IBM POWER 7p. */
 	cpuinfo_uarch_power7p   = 0x00D00101,
-	/** POWER 8. */
+	/** IBM POWER 8. */
 	cpuinfo_uarch_power8    = 0x00D00200,
-	/** POWER8E. */
+	/** IBM POWER8E. */
 	cpuinfo_uarch_power8e   = 0x00D00201,
-	/** POWER8NVL */
+	/** IBM POWER8NVL */
 	cpuinfo_uarch_power8nvl = 0x00D00202,
-	/** POWER 9. */
+	/** IBM POWER 9. */
 	cpuinfo_uarch_power9    = 0x00D00303,
-	/** POWER 10. */
+	/** IBM POWER 10. */
 	cpuinfo_uarch_power10   = 0x00D00400,
 };
 
@@ -839,6 +838,10 @@ struct cpuinfo_x86_isa {
 	bool avx512vp2intersect;
 	bool avx512_4vnniw;
 	bool avx512_4fmaps;
+	bool amx_bf16;
+	bool amx_tile;
+	bool amx_int8;
+	bool amx_fp16;
 	bool hle;
 	bool rtm;
 	bool xtest;
@@ -1350,6 +1353,58 @@ static inline bool cpuinfo_has_x86_avx512_4vnniw(void) {
 static inline bool cpuinfo_has_x86_avx512_4fmaps(void) {
 #if CPUINFO_ARCH_X86 || CPUINFO_ARCH_X86_64
 	return cpuinfo_isa.avx512_4fmaps;
+#else
+	return false;
+#endif
+}
+
+/* [NOTE] Intel Advanced Matrix Extensions (AMX) detection
+ *
+ * I.  AMX is a new extensions to the x86 ISA to work on matrices, consists of
+ *   1) 2-dimentional registers (tiles), hold sub-matrices from larger matrices in memory
+ *   2) Accelerator called Tile Matrix Multiply (TMUL), contains instructions operating on tiles
+ *
+ * II. Platforms that supports AMX:
+ * +-----------------+-----+----------+----------+----------+----------+
+ * |    Platforms    | Gen | amx-bf16 | amx-tile | amx-int8 | amx-fp16 |
+ * +-----------------+-----+----------+----------+----------+----------+
+ * | Sapphire Rapids | 4th |   YES    |   YES    |   YES    |    NO    |
+ * +-----------------+-----+----------+----------+----------+----------+
+ * | Emerald Rapids  | 5th |   YES    |   YES    |   YES    |    NO    |
+ * +-----------------+-----+----------+----------+----------+----------+
+ * | Granite Rapids  | 6th |   YES    |   YES    |   YES    |   YES    |
+ * +-----------------+-----+----------+----------+----------+----------+
+ *
+ * Reference: https://www.intel.com/content/www/us/en/products/docs
+ *    /accelerator-engines/advanced-matrix-extensions/overview.html
+ */
+static inline bool cpuinfo_has_x86_amx_bf16(void) {
+#if CPUINFO_ARCH_X86 || CPUINFO_ARCH_X86_64
+	return cpuinfo_isa.amx_bf16;
+#else
+	return false;
+#endif
+}
+
+static inline bool cpuinfo_has_x86_amx_tile(void) {
+#if CPUINFO_ARCH_X86 || CPUINFO_ARCH_X86_64
+	return cpuinfo_isa.amx_tile;
+#else
+	return false;
+#endif
+}
+
+static inline bool cpuinfo_has_x86_amx_int8(void) {
+#if CPUINFO_ARCH_X86 || CPUINFO_ARCH_X86_64
+	return cpuinfo_isa.amx_int8;
+#else
+	return false;
+#endif
+}
+
+static inline bool cpuinfo_has_x86_amx_fp16(void) {
+#if CPUINFO_ARCH_X86 || CPUINFO_ARCH_X86_64
+	return cpuinfo_isa.amx_fp16;
 #else
 	return false;
 #endif
@@ -2092,10 +2147,10 @@ static inline bool cpuinfo_has_powerpc_htm(void) {
 }
 
 static inline bool cpuinfo_has_powerpc_mma(void) {
-#if CPUINFO_ARCH_PPC64		
+#if CPUINFO_ARCH_PPC64
 	return cpuinfo_isa.mma;
 #else
-		return false;
+	return false;
 #endif
 }
 
