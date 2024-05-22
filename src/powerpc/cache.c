@@ -71,10 +71,9 @@ void cpuinfo_powerpc_decode_cache(
 		switch (i) {
 			case 0:
 				geometry = getauxval(AT_L1D_CACHEGEOMETRY);
-				size = getauxval(AT_L1D_CACHESIZE);
+				size=getauxval(AT_L1D_CACHESIZE);
 				cache_features[0] = size;
 				decode_cache_features(cache_features, geometry);
-				sets = size/(cache_features[1] * cache_features[2]);
 				*l1d = (struct cpuinfo_cache) {
 					.size = size,
 					.associativity = cache_features[1],
@@ -89,7 +88,6 @@ void cpuinfo_powerpc_decode_cache(
 				size=getauxval(AT_L1I_CACHESIZE);
 				cache_features[0] = size;
 				decode_cache_features(cache_features, geometry);
-				sets = size/(cache_features[1] * cache_features[2]);
 				*l1i = (struct cpuinfo_cache) {
 					.size = size,
 					.associativity = cache_features[1],
@@ -103,7 +101,6 @@ void cpuinfo_powerpc_decode_cache(
 				size=getauxval(AT_L2_CACHESIZE);
 				cache_features[0] = size;
 				decode_cache_features(cache_features, geometry);
-				sets = size/(cache_features[1] * cache_features[2]);
 				*l2 = (struct cpuinfo_cache) {
 					.size = size,
 					.associativity = cache_features[1],
@@ -117,7 +114,6 @@ void cpuinfo_powerpc_decode_cache(
 				size=getauxval(AT_L3_CACHESIZE);
 				cache_features[0] = size;
 				decode_cache_features(cache_features, geometry);
-				sets = size/(cache_features[1] * cache_features[2]);
 				*l3 = (struct cpuinfo_cache) {
 					.size = size,
 					.associativity = cache_features[1],
